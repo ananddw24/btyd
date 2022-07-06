@@ -1,43 +1,36 @@
-## Saving and loading model
+### Model Persistence
 
-When you have lots of data and training takes a lot of time option with saving and loading model could be useful. First you need to fit the model, then save it and load.
+Model persistence is helpful for saving and loading BTYD models for reuse as well as logging to a registry server such as `mlflow`. After a model has been fit, persistence is handled externally via the [ArViZ](https://python.arviz.org/en/latest/api/inference_data.html) library, which is a transitive dependency of BTYD and installed automatically:
 
 ### Fit model
 
 ```python
-from lifetimes import BetaGeoFitter
-from lifetimes.datasets import load_cdnow_summary
+from btyd import BetaGeoModel
+from btyd.datasets import load_cdnow_summary
 
 data = load_cdnow_summary(index_col=[0])
-bgf = BetaGeoFitter()
-bgf.fit(data['frequency'], data['recency'], data['T'])
-bgf
-"""<lifetimes.BetaGeoFitter: fitted with 2357 subjects, a: 0.79, alpha: 4.41, b: 2.43, r: 0.24>"""
+bgm = BetaGeoModel()
+bgm.fit(data)
+bgm
+"""<btyd.BetaGeoModel: Parameters {'alpha': 4.5, 'r': 0.2, 'a': 0.8, 'b': 2.4} estimated with 2357 customers.>"""
 ```
 
-### Saving model
+### Saving and Loading Models
 
-Model will be saved with [dill](https://github.com/uqfoundation/dill) to pickle object. Optional parameters `save_data` and `save_generate_data_method` are present to reduce final pickle object size for big dataframes.
-Optional parameters:
-- `save_data` is used for saving data from model or not (default: `True`).
-- `save_generate_data_method` is used for saving `generate_new_data` method from model or not (default: `True`)
 
 ```python
-bgf.save_model('bgf.pkl')
+import arviz as az
+
+# Save inference data of a fitted model as a JSON:
+bgm.idata.to_json('path/to/file.json')
+
+# Load model inference data from a JSON into a new or existing model:
+bgm._idata = az.from_json('path/to/file.json')
+bgm_new = BetaGeoModel()
+bgm_new._idata = az.from_json('path/to/file.json')
+
+bgm_new
+"""<btyd.BetaGeoModel: Parameters {'alpha': 4.5, 'r': 0.2, 'a': 0.8, 'b': 2.4} estimated with 2357 customers.>"""
 ```
 
-or to save only model with minumum size without `data` and `generate_new_data`:
-```python
-bgf.save_model('bgf_small_size.pkl', save_data=False, save_generate_data_method=False)
-```
-
-### Loading model
-
-Before loading you should initialize the model first and then use method `load_model`
-
-```python
-bgf_loaded = BetaGeoFitter()
-bgf_loaded.load_model('bgf.pkl')
-bgf_loaded
-"""<lifetimes.BetaGeoFitter: fitted with 2357 subjects, a: 0.79, alpha: 4.41, b: 2.43, r: 0.24>"""
-```
+The above example persists models in JSON format, but ArViZ supports many other formats and functionalities for model._idata `InferenceData` objects such as plotting as statistical metrics, and is worth taking the time to learn in order to make the most of BTYD.

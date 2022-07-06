@@ -4,27 +4,25 @@ This is intended to be a high-level documentation of how the code is structured.
 
 ## Workflow
 
-The usual workflow of using the `Lifetimes` library is exemplified in the [Quickstart](Quickstart.md) page. It can also be represented through the following fluxogram:
+The usual workflow of using the `btyd` library is exemplified in the [Quickstart](Quickstart.md) page. It can also be represented through the following fluxogram:
 
 ![Basic Workflow](https://i.imgur.com/oV2KpQG.png)
 
 Notice that the right-most branch of the fluxogram actually refers to *monetary value* modeling.
 
-## Fitters
+## Models
 
-The core fitter is the `BaseFitter` class is inside the `__init__.py`, which serves as a *superclass* for most of the the other fitters. So far, only the `ModifiedBetaGeoFitter` is set on a higher layer, inheriting from the `BetaGeoFitter`. The following image shows the simplified interaction of the main fitter classes.
+The core model primitive is the `BaseModel` abstract class inside `__init__.py`, which serves as a *superclass* for all models in BTYD. So far, only the `BetaGeoModel` is set on a higher layer, inheriting from the `BaseModel` and `PredictMixin` abstract classes. `PredictMixin` enforces model prediction conventions for all models except `GammaGammaModel`. The following image shows the UML Class Diagram for all modeling objects:
 
-![Simplified Fitters Fluxograms](https://i.imgur.com/RRF6ezC.png)
-
-Below is a more detailed fluxogram of the classes. The arrows with the empty arrowheads symbolize inheritance. If the image is too small, you can find the source [here](https://i.imgur.com/ZPHg36q.png).
-
-![Complete UML Fluxogram](https://i.imgur.com/ZPHg36q.png)
+![models_uml](https://user-images.githubusercontent.com/10178857/173042105-c35aea83-8d46-4cc7-8236-53360a0eb8df.png)
+If the image is too small, you can go to the source [here](https://user-images.githubusercontent.com/10178857/173042105-c35aea83-8d46-4cc7-8236-53360a0eb8df.png).
 
 ## Graphs
 
-Graphs are plotted with functions coming from the `plotting.py` file. The main functions are cited below, alongside a brief description of how they are created.
+Graphs are plotted with functions coming from the `plotting.py` file. The main functions are cited below, alongside a brief description of how they are created:
 
 ![plotting.py functions](https://i.imgur.com/hbmsPQk.png)
+If the image is too small, you can go to the source [here](https://i.imgur.com/hbmsPQk.png).
 
 - `plot_period_transactions` : aggregation on how many purchases each customer has made in the calibration period.
 - `plot_calibration_purchases_vs_holdout_purchases` : aggregation over the conditional expected number of purchases.
@@ -39,7 +37,7 @@ Graphs are plotted with functions coming from the `plotting.py` file. The main f
 
 ## The `utils.py` File
 
-In the `utils.py` file we can find some useful functions that are used inside the library and/or can be accessed by the end-user. Some of them are listed below:
+In the `utils.py` file we can find some useful functions that are used inside the library [and/or can be accessed by the end-user](https://raw.githubusercontent.com/ColtAllen/btyd/main/docs/call_graph_modules.html). (Download the link and open locally in your browser to view the call dependency graph.) These functions are also listed below:
 
 - `calibration_and_holdout_data` : RFM data separated into calibration and holdout.
 - `_find_first_transactions` : DataFrame with the first transactions.

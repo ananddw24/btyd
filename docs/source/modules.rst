@@ -1,7 +1,7 @@
-lifetimes
+btyd
 =========
 
 .. toctree::
    :maxdepth: 4
 
-   lifetimes
+   btyd

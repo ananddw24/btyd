@@ -1,38 +1,38 @@
-lifetimes package
+btyd package
 =================
 
 .. toctree::
 
-    lifetimes.fitters
-    lifetimes.utils
-    lifetimes.datasets
+    btyd.fitters
+    btyd.utils
+    btyd.datasets
 
 
-lifetimes.generate\_data module
+btyd.generate\_data module
 -------------------------------
 
-.. automodule:: lifetimes.generate_data
+.. automodule:: btyd.generate_data
     :members:
     :undoc-members:
     :show-inheritance:
 
-lifetimes.plotting module
+btyd.plotting module
 -------------------------
 
-.. automodule:: lifetimes.plotting
+.. automodule:: btyd.plotting
     :members:
     :undoc-members:
     :show-inheritance:
 
-lifetimes.utils module
+btyd.utils module
 ----------------------
 
-.. automodule:: lifetimes.utils
+.. automodule:: btyd.utils
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: lifetimes
+.. automodule:: btyd
     :members:
     :undoc-members:
     :show-inheritance:
