@@ -4,11 +4,11 @@ btyd package
 .. toctree::
 
     btyd.fitters
-    btyd.utils
+    btyd.models
     btyd.datasets
 
 
-btyd.generate\_data module
+generate\_data module
 -------------------------------
 
 .. automodule:: btyd.generate_data
@@ -16,7 +16,7 @@ btyd.generate\_data module
     :undoc-members:
     :show-inheritance:
 
-btyd.plotting module
+plotting module
 -------------------------
 
 .. automodule:: btyd.plotting
@@ -24,7 +24,7 @@ btyd.plotting module
     :undoc-members:
     :show-inheritance:
 
-btyd.utils module
+utils module
 ----------------------
 
 .. automodule:: btyd.utils

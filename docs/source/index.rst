@@ -6,11 +6,13 @@
 Welcome to btyd's documentation!
 ================================
 
+.. include:: intro.rst
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   Quickstart
+   Userguide
    High Level Overview
    Saving and loading model
    More examples and recipes
