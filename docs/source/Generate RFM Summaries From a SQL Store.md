@@ -1,4 +1,4 @@
-## More Examples and recipes
+# Generate RFM Summaries From a SQL Store
 
 ### Example SQL statement to transform transactional data into RFM data
 
