@@ -2,15 +2,16 @@
 
 init:
 	poetry install
+	poetry shell
 
 lint:
 	poetry isort .
 	poetry black .
 
 check_lint:
-	poetry flake8 .
-	poetry isort --check-only .
-	poetry black --diff --check --fast .
+	flake8 .
+	isort --check-only .
+	black --diff --check --fast .
 
 test:
-	poetry pytest
+	pytest
