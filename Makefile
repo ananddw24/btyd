@@ -1,6 +1,7 @@
 .PHONY: init lint check_lint test
 
 init:
+	poetry lock
 	poetry install
 
 lint:
