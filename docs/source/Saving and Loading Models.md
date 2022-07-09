@@ -1,4 +1,4 @@
-### Model Persistence
+# Model Persistence
 
 Model persistence is helpful for saving and loading BTYD models for reuse as well as logging to a registry server such as `mlflow`. After a model has been fit, persistence is handled externally via the [ArViZ](https://python.arviz.org/en/latest/api/inference_data.html) library, which is a transitive dependency of BTYD and installed automatically:
 

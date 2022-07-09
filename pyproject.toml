@@ -16,6 +16,8 @@ dill = "0.3.5.1"
 pytest = "^7.1.2"
 sphinx = "^5.0.2"
 sphinxcontrib-napoleon = "^0.7"
+myst-parser = "^0.18.0"
+pydata-sphinx-theme = "^0.9.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

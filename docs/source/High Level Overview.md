@@ -4,7 +4,7 @@ This is intended to be a high-level documentation of how the code is structured.
 
 ## Workflow
 
-The usual workflow of using the `btyd` library is exemplified in the [Quickstart](Quickstart.md) page. It can also be represented through the following fluxogram:
+The usual workflow of using the `btyd` library is exemplified in the [User Guide](User Guide.md) page. It can also be represented through the following fluxogram:
 
 ![Basic Workflow](https://raw.githubusercontent.com/ColtAllen/btyd/docs/update_read_the_docs/docs/source/_static/btyd_workflow.png)
 
@@ -37,7 +37,7 @@ If the image is too small, you can go to the source [here](https://raw.githubuse
 
 ## The `utils.py` File
 
-In the `utils.py` file we can find some useful functions that are used inside the library [and/or can be accessed by the end-user](https://raw.githubusercontent.com/ColtAllen/btyd/update_read_the_docs/docs/source/call_graph_modules.html). (Download the link and open locally in your browser to view the call dependency graph.) These functions are also listed below:
+In the `utils.py` file we can find some useful functions that are used inside the library and listed below:
 
 - `calibration_and_holdout_data` : RFM data separated into calibration and holdout.
 - `_find_first_transactions` : DataFrame with the first transactions.

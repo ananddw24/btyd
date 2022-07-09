@@ -12,10 +12,10 @@ Welcome to btyd's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   Userguide
+   User Guide
    High Level Overview
-   Saving and loading model
-   More examples and recipes
+   Saving and Loading Models
+   Generate RFM Summaries From a SQL Store
    btyd
    Changelog
 
