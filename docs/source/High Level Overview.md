@@ -4,27 +4,25 @@ This is intended to be a high-level documentation of how the code is structured.
 
 ## Workflow
 
-The usual workflow of using the `Lifetimes` library is exemplified in the [Quickstart](Quickstart.md) page. It can also be represented through the following fluxogram:
+The usual workflow of using the `btyd` library is exemplified in the [User Guide](User Guide.md) page. It can also be represented through the following fluxogram:
 
-![Basic Workflow](https://i.imgur.com/oV2KpQG.png)
+![Basic Workflow](https://raw.githubusercontent.com/ColtAllen/btyd/docs/update_read_the_docs/docs/source/_static/btyd_workflow.png)
 
 Notice that the right-most branch of the fluxogram actually refers to *monetary value* modeling.
 
-## Fitters
+## Models
 
-The core fitter is the `BaseFitter` class is inside the `__init__.py`, which serves as a *superclass* for most of the the other fitters. So far, only the `ModifiedBetaGeoFitter` is set on a higher layer, inheriting from the `BetaGeoFitter`. The following image shows the simplified interaction of the main fitter classes.
+The core model primitive is the `BaseModel` abstract class inside `__init__.py`, which serves as a *superclass* for all models in BTYD. So far, only the `BetaGeoModel` is set on a higher layer, inheriting from the `BaseModel` and `PredictMixin` abstract classes. `PredictMixin` enforces model prediction conventions for all models except `GammaGammaModel`. The following image shows the UML Class Diagram for all modeling objects:
 
-![Simplified Fitters Fluxograms](https://i.imgur.com/RRF6ezC.png)
-
-Below is a more detailed fluxogram of the classes. The arrows with the empty arrowheads symbolize inheritance. If the image is too small, you can find the source [here](https://i.imgur.com/ZPHg36q.png).
-
-![Complete UML Fluxogram](https://i.imgur.com/ZPHg36q.png)
+![models_uml](https://raw.githubusercontent.com/ColtAllen/btyd/docs/update_read_the_docs/docs/source/_static/models_uml.png)
+If the image is too small, you can go to the source [here](https://raw.githubusercontent.com/ColtAllen/btyd/docs/update_read_the_docs/docs/source/_static/models_uml.png).
 
 ## Graphs
 
-Graphs are plotted with functions coming from the `plotting.py` file. The main functions are cited below, alongside a brief description of how they are created.
+Graphs are plotted with functions coming from the `plotting.py` file. The main functions are cited below, alongside a brief description of how they are created:
 
-![plotting.py functions](https://i.imgur.com/hbmsPQk.png)
+![plotting.py functions](https://raw.githubusercontent.com/ColtAllen/btyd/docs/update_read_the_docs/docs/source/_static/btyd_plotting.png)
+If the image is too small, you can go to the source [here](https://raw.githubusercontent.com/ColtAllen/btyd/docs/update_read_the_docs/docs/source/_static/btyd_plotting.png).
 
 - `plot_period_transactions` : aggregation on how many purchases each customer has made in the calibration period.
 - `plot_calibration_purchases_vs_holdout_purchases` : aggregation over the conditional expected number of purchases.
@@ -39,7 +37,7 @@ Graphs are plotted with functions coming from the `plotting.py` file. The main f
 
 ## The `utils.py` File
 
-In the `utils.py` file we can find some useful functions that are used inside the library and/or can be accessed by the end-user. Some of them are listed below:
+In the `utils.py` file we can find some useful functions that are used inside the library and listed below:
 
 - `calibration_and_holdout_data` : RFM data separated into calibration and holdout.
 - `_find_first_transactions` : DataFrame with the first transactions.

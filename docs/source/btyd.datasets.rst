@@ -1,7 +1,7 @@
-lifetimes.datasets
+btyd.datasets
 ==========================
 
-.. automodule:: lifetimes.datasets
+.. automodule:: btyd.datasets
     :members:
     :undoc-members:
     :show-inheritance:

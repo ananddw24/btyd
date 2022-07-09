@@ -1,9 +1,9 @@
-## Quickstart
+# Quickstart
 
 For the following examples, we'll use a dataset from an ecommerce provider to analyze their customers' repeat purchases. The examples below are using the `cdnow_customers.csv` located in the `datasets/` directory.
 
 ```python
-from lifetimes.datasets import load_cdnow_summary
+from btyd.datasets import load_cdnow_summary
 data = load_cdnow_summary(index_col=[0])
 
 print(data.head())
@@ -26,48 +26,36 @@ For all models, the following nomenclature is used:
 - `recency` represents the age of the customer when they made their most recent purchases. This is equal to the duration between a customer's first purchase and their latest purchase. (Thus if they have made only 1 purchase, the recency is 0.)
 - `monetary_value` represents the average value of a given customer's purchases. This is equal to the sum of all a customer's purchases divided by the total number of purchases. Note that the denominator here is different than the `frequency` described above.
 
-If your data is not in the format (very common), there are [utility functions](#example-using-transactional-datasets) in lifetimes to transform your data to look like this.
+If your data is not in the format (very common), there are utility functions in btyd to transform your data to look like this.
 
 #### Basic Frequency/Recency analysis using the BG/NBD model
 
 We'll use the **BG/NBD model** first. There are other models which we will explore in these docs, but this is the simplest to start with.
 
 ```python
-from lifetimes import BetaGeoFitter
+from btyd import BetaGeoFitter
 
-# similar API to scikit-learn and lifelines.
-bgf = BetaGeoFitter(penalizer_coef=0.0)
-bgf.fit(data['frequency'], data['recency'], data['T'])
-print(bgf)
+# similar API to scikit-learn.
+bgm = BetaGeoFitter().fit(data)
+print(bgm)
 """
-<lifetimes.BetaGeoFitter: fitted with 2357 subjects, a: 0.79, alpha: 4.41, b: 2.43, r: 0.24>
-"""
-
-bgf.summary
-"""
-           coef  se(coef)  lower 95% bound  upper 95% bound
-r      0.242593  0.012557         0.217981         0.267205
-alpha  4.413532  0.378221         3.672218         5.154846
-a      0.792886  0.185719         0.428877         1.156895
-b      2.425752  0.705345         1.043276         3.808229
+<btyd.BetaGeoModel: Parameters {'alpha': 4.5, 'r': 0.2, 'a': 0.8, 'b': 2.4} estimated with 2357 customers.>
 """
 ```
 
 After fitting, we have lots of nice methods and properties attached to the fitter object, like ``param_`` and ``summary``.
 
-For small samples sizes, the parameters can get implausibly large, so by adding an l2 penalty the likelihood, we can control how large these parameters can be. This is implemented as setting as positive `penalizer_coef` in the initialization of the model. In typical applications, penalizers on the order of 0.001 to 0.1 are effective.
-
 ##### Visualizing our Frequency/Recency Matrix
 
-Consider: a customer bought from you every day for three weeks straight, and we haven't heard from them in months. What are the chances they are still "alive"? Pretty small. On the other hand, a customer who historically buys from you once a quarter, and bought last quarter, is likely still alive. We can visualize this relationship using the **Frequency/Recency matrix**, which computes the expected number of transactions an artificial customer is to make in the next time period, given his or her recency (age at last purchase) and frequency (the number of repeat transactions he or she has made).
+Consider a customer who bought from you every day for three weeks straight, and we haven't heard from them in months. What are the chances they are still "alive"? Pretty small. On the other hand, a customer who historically buys from you once a quarter, and bought last quarter, is likely still alive. We can visualize this relationship using the **Frequency/Recency matrix**, which computes the expected number of transactions an artificial customer is to make in the next time period, given his or her recency (age at last purchase) and frequency (the number of repeat transactions he or she has made).
 
 ```
-from lifetimes.plotting import plot_frequency_recency_matrix
+from btyd.plotting import plot_frequency_recency_matrix
 
-plot_frequency_recency_matrix(bgf)
+plot_frequency_recency_matrix(bgm)
 ```
 
-![fr_matrix](http://imgur.com/Rw8PGcq.png)
+![rfm_matrix](https://raw.githubusercontent.com/ColtAllen/btyd/docs/update_read_the_docs/docs/source/_static/rfmatrix.png)
 
 
 We can see that if a customer has bought 25 times from you, and their latest purchase was when they were 35 weeks old (given the individual is 35 weeks old), then they are your best customer (bottom-right). Your coldest customers are those that are in the top-right corner: they bought a lot quickly, and we haven't seen them in weeks.
@@ -77,12 +65,12 @@ There's also that beautiful "tail" around (5,25). That represents the customer w
 Another interesting matrix to look at is the probability of still being *alive*:
 
 ```python
-from lifetimes.plotting import plot_probability_alive_matrix
+from btyd.plotting import plot_probability_alive_matrix
 
-plot_probability_alive_matrix(bgf)
+plot_probability_alive_matrix(bgm)
 ```
 
-![prob](http://imgur.com/di6MTic.png)
+![prob](https://raw.githubusercontent.com/ColtAllen/btyd/docs/update_read_the_docs/docs/source/_static/alivematrix.png)
 
 ##### Ranking customers from best to worst
 
@@ -90,7 +78,7 @@ Let's return to our customers and rank them from "highest expected purchases in 
 
 ```python
 t = 1
-data['predicted_purchases'] = bgf.conditional_expected_number_of_purchases_up_to_time(t, data['frequency'], data['recency'], data['T'])
+data['predicted_purchases'] = bgm.conditional_expected_number_of_purchases_up_to_time(t)
 data.sort_values(by='predicted_purchases').tail(5)
 """
        frequency  recency      T        predicted_purchases
@@ -103,28 +91,28 @@ ID
 """
 ```
 
-Great, we can see that the customer who has made 26 purchases, and bought very recently from us, is probably going to buy again in the next period.
+Great! We can see that the customer who has made 26 purchases, and bought very recently from us, is probably going to buy again in the next period.
 
-##### Assessing model fit
+##### Assessing Model Fit
 
 Ok, we can predict and we can visualize our customers' behaviour, but is our model correct? There are a few ways to assess the model's correctness. The first is to compare your data versus artificial data simulated with your fitted model's parameters.
 
 ```python
-from lifetimes.plotting import plot_period_transactions
-plot_period_transactions(bgf)
+from btyd.plotting import plot_period_transactions
+plot_period_transactions(bgm)
 ```
 
-![model_fit_1](http://imgur.com/qlE4LDU.png)
+![model_fit_1](https://raw.githubusercontent.com/ColtAllen/btyd/docs/update_read_the_docs/docs/source/_static/plotperiodtrans.png)
 
-We can see that our actual data and our simulated data line up well. This proves that our model doesn't suck.
+We can see that our actual data and our simulated data line up well.
 
-##### Example using transactional datasets
+##### Example Using Transactional Datasets
 
-Most often, the dataset you have at hand will be at the transaction level. Lifetimes has some utility functions to transform that transactional data (one row per purchase) into summary data (a frequency, recency and age dataset).
+Most often, the dataset you have at hand will be at the transaction level. btyd has some utility functions to transform that transactional data (one row per purchase) into summary data (a frequency, recency and age dataset).
 
 ```python
-from lifetimes.datasets import load_transaction_data
-from lifetimes.utils import summary_data_from_transaction_data
+from btyd.datasets import load_transaction_data
+from btyd.utils import summary_data_from_transaction_data
 
 transaction_data = load_transaction_data()
 print(transaction_data.head())
@@ -150,16 +138,17 @@ id
 4         2.0      9.0  183.0
 """
 
-bgf.fit(summary['frequency'], summary['recency'], summary['T'])
-# <lifetimes.BetaGeoFitter: fitted with 5000 subjects, a: 1.85, alpha: 1.86, b: 3.18, r: 0.16>
+bgm.fit(summary)
+# <btyd.BetaGeoModel: Parameters {'alpha': 1.86, 'r': 0., 'a': 1.85, 'b': 3.18} estimated with 5000 customers.>
 ```
 
-##### More model fitting
 
-With transactional data, we can partition the dataset into a calibration period dataset and a holdout dataset. This is important as we want to test how our model performs on data not yet seen (think cross-validation in standard machine learning literature). Lifetimes has a function to partition our dataset like this:
+##### More Model Estimation
+
+With transactional data, we can partition the dataset into a calibration period dataset and a holdout dataset. This is important as we want to test how our model performs on data not yet seen (think cross-validation in standard machine learning literature). btyd has a function to partition our dataset like this:
 
 ```python
-from lifetimes.utils import calibration_and_holdout_data
+from btyd.utils import calibration_and_holdout_data
 
 summary_cal_holdout = calibration_and_holdout_data(transaction_data, 'id', 'date',
                                         calibration_period_end='2014-09-01',
@@ -176,53 +165,52 @@ id
 """
 ```
 
-With this dataset, we can perform fitting on the `_cal` columns, and test on the `_holdout` columns:
+With this dataset, we can perform model estimation on the `_cal` columns, and test on the `_holdout` columns:
 
 ```python
-from lifetimes.plotting import plot_calibration_purchases_vs_holdout_purchases
+from btyd.plotting import plot_calibration_purchases_vs_holdout_purchases
 
-bgf.fit(summary_cal_holdout['frequency_cal'], summary_cal_holdout['recency_cal'], summary_cal_holdout['T_cal'])
+bgm.fit(summary_cal_holdout)
 plot_calibration_purchases_vs_holdout_purchases(bgf, summary_cal_holdout)
 ```
 
-![holdout](http://imgur.com/LdSEYUwl.png)
+![holdout](https://raw.githubusercontent.com/ColtAllen/btyd/docs/update_read_the_docs/docs/source/_static/holdout_graph.png)
 
 ##### Customer Predictions
 
-Based on customer history, we can predict what an individuals future purchases might look like:
+Based on customer history, we can predict what an individual's future purchases might look like:
 
 ```python
 t = 10 #predict purchases in 10 periods
 individual = summary.iloc[20]
-# The below function is an alias to `bfg.conditional_expected_number_of_purchases_up_to_time`
-bgf.predict(t, individual['frequency'], individual['recency'], individual['T'])
+# The below function is an alias to `bfm.conditional_expected_number_of_purchases_up_to_time`
+bgm.predict('cond_n_prchs_to_t', t, rfm_df = individual)
 # 0.0576511
 ```
 
 ##### Customer Probability Histories
 
-Given a customer transaction history, we can calculate their historical probability of being alive, according to
-our trained model. For example:
+Given a customer's transaction history, we can calculate their historical probability of being alive according to
+our trained model:
 
 ```python
-from lifetimes.plotting import plot_history_alive
+from btyd.plotting import plot_history_alive
 
 id = 35
 days_since_birth = 200
 sp_trans = transaction_data.loc[transaction_data['id'] == id]
-plot_history_alive(bgf, days_since_birth, sp_trans, 'date')
+plot_history_alive(bgm, days_since_birth, sp_trans, 'date')
 ```
 
-![history](http://i.imgur.com/y45tum4.png)
+![history](https://raw.githubusercontent.com/ColtAllen/btyd/docs/update_read_the_docs/docs/source/_static/palive_history.png)
 
-### Estimating customer lifetime value using the Gamma-Gamma model
+### Estimating Customer Lifetime Value using the Gamma-Gamma model
 
-For this whole time we didn't take into account the economic value of each transaction and we focused mainly on
-transactions' occurrences. To estimate this we can use the Gamma-Gamma submodel. But first we need to create summary data
+Until now we've focused mainly on transaction frequencies and probabilities, but to estimate economic value we can use the Gamma-Gamma model. First we create summary data
 from transactional data also containing economic values for each transaction (i.e. profits or revenues).
 
 ```python
-from lifetimes.datasets import load_cdnow_summary_data_with_monetary_value
+from btyd.datasets import load_cdnow_summary_data_with_monetary_value
 
 summary_with_money_value = load_cdnow_summary_data_with_monetary_value()
 summary_with_money_value.head()
@@ -243,11 +231,10 @@ customer_id
 If computing the monetary value from your own data, note that it is the __mean__ of a given customer's value, not the __sum__.
 `monetary_value` can be used to represent profit, or revenue, or any value as long as it is consistently calculated for each customer.
 
-#### The Gamma-Gamma model and the independence assumption
-The model we are going to use to estimate the CLV for our userbase is called the Gamma-Gamma submodel,
-which relies upon an important assumption. The Gamma-Gamma submodel, in fact, assumes that there is no
+#### The Gamma-Gamma Model and the Independence Assumption
+The Gamma-Gamma submodel relies upon the important assumption there is no
 relationship between the monetary value and the purchase frequency. In practice we need to check whether
-the Pearson correlation between the two vectors is close to 0 in order to use this model.
+the Pearson correlation between the two vectors is less than 0.3 in order to use this model:
 
 ```python
 returning_customers_summary[['monetary_value', 'frequency']].corr()
@@ -258,26 +245,23 @@ frequency             0.113884   1.000000
 """
 ```
 
-At this point we can train our Gamma-Gamma submodel and predict the conditional, expected average lifetime value of our customers.
+Transaction frequencies and monetary values are uncorrelated; we can now train our Gamma-Gamma submodel and predict the conditional, expected average lifetime values of our customers:
 
 ```python
-from lifetimes import GammaGammaFitter
+from btyd import GammaGammaModels
 
-ggf = GammaGammaFitter(penalizer_coef = 0)
-ggf.fit(returning_customers_summary['frequency'],
-        returning_customers_summary['monetary_value'])
-print(ggf)
+ggm = GammaGammaModel()
+ggm.fit(returning_customers_summary)
+print(ggm)
 """
-<lifetimes.GammaGammaFitter: fitted with 946 subjects, p: 6.25, q: 3.74, v: 15.45>
+<btyd.GammaGammaModel: Parameters {'p': 6.25, 'q': 3.74, 'v': 15.45} estimated with 946 customers.>
 """
 ```
+
 We can now estimate the average transaction value:
 
 ```python
-print(ggf.conditional_expected_average_profit(
-        summary_with_money_value['frequency'],
-        summary_with_money_value['monetary_value']
-    ).head(10))
+print(ggm.predict('cond_avg_profit').head(10))
 """
 customer_id
 1     24.658619
@@ -294,10 +278,7 @@ dtype: float64
 """
 
 print("Expected conditional average profit: %s, Average profit: %s" % (
-    ggf.conditional_expected_average_profit(
-        summary_with_money_value['frequency'],
-        summary_with_money_value['monetary_value']
-    ).mean(),
+    ggm.predict('cond_avg_profit').mean(),
     summary_with_money_value[summary_with_money_value['frequency']>0]['monetary_value'].mean()
 ))
 """
@@ -305,19 +286,15 @@ Expected conditional average profit: 35.2529588256, Average profit: 35.078551797
 """
 ```
 
-While for computing the total CLV using the DCF method (https://en.wikipedia.org/wiki/Discounted_cash_flow) adjusting for cost of capital:
+And also compute the total Customer Lifetime Value (CLV) via the Discounted Cash Flow (DCF) method (https://en.wikipedia.org/wiki/Discounted_cash_flow) while adjusting for cost of capital:
 
 ```python
-# refit the BG model to the summary_with_money_value dataset
-bgf.fit(summary_with_money_value['frequency'], summary_with_money_value['recency'], summary_with_money_value['T'])
+# Refit the BG model to the summary_with_money_value dataset
+bgm.fit(summary_with_money_value)
 
-print(ggf.customer_lifetime_value(
-    bgf, #the model to use to predict the number of future transactions
-    summary_with_money_value['frequency'],
-    summary_with_money_value['recency'],
-    summary_with_money_value['T'],
-    summary_with_money_value['monetary_value'],
-    time=12, # months
+print(ggm.predict('clv',
+    bgm, # the model used to predict the number of future transactions
+    time=12, # time periods (in this case, months)
     discount_rate=0.01 # monthly discount rate ~ 12.7% annually
 ).head(10))
 """

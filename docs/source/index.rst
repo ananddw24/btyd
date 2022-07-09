@@ -1,7 +1,10 @@
-.. lifetimes documentation master file, created by
-   sphinx-quickstart on Fri Jul  7 14:10:36 2017.
+.. btyd documentation master file, created by
+   sphinx-quickstart on Wed Jul  6 10:52:03 2022.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
+
+Welcome to btyd's documentation!
+================================
 
 .. include:: intro.rst
 
@@ -9,16 +12,17 @@
    :maxdepth: 2
    :caption: Contents:
 
-   Quickstart
+   User Guide
    High Level Overview
-   Saving and loading model
-   More examples and recipes
-   lifetimes
+   Saving and Loading Models
+   Generate RFM Summaries From a SQL Store
+   btyd
    Changelog
 
 
+
 Indices and tables
-------------------
+==================
 
 * :ref:`genindex`
 * :ref:`modindex`
