@@ -37,7 +37,7 @@ addopts = [
     "-v",
     "--strict-markers",
     "--strict-config",
-    "--cov=mmm",
-    "--cov=pymmmc",
+    "--cov=btyd",
+    "--cov=tests",
 ]
 testpaths = "tests/"
