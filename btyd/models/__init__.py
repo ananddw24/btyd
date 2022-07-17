@@ -11,6 +11,8 @@ import pandas as pd
 
 import pymc as pm
 import aesara.tensor as at
+import arviz as az
+import xarray as xr
 
 from ..utils import _check_inputs
 
@@ -77,7 +79,7 @@ class BaseModel(ABC, Generic[SELF]):
         self._frequency, self._recency, self._T, self._monetary_value, _ = self._dataframe_parser(rfm_df)
 
         with self._model():
-            self.idata = pm.sample(
+            self._idata = pm.sample(
                 tune=tune,
                 draws=draws,
                 chains=4,
@@ -92,7 +94,7 @@ class BaseModel(ABC, Generic[SELF]):
         """Extract parameter posteriors from _idata InferenceData attribute of fitted model."""
 
         # BETA TODO: Raise BTYDException.
-         # if dict(filter(lambda item: self.__class__.__name__ not in item[0], self.idata.posterior.get('data_vars').items()))
+         # if dict(filter(lambda item: self.__class__.__name__ not in item[0], self._idata.posterior.get('data_vars').items()))
              # raise BTYDException
         
         # test param exception (need another saved model and additions to self._unload_params())
@@ -102,7 +104,7 @@ class BaseModel(ABC, Generic[SELF]):
             return tuple(
                 [
                     self._sample(
-                    self.idata.posterior.get(f'{self.__class__.__name__}::{var}').values.flatten(),
+                    self._idata.posterior.get(f'{self.__class__.__name__}::{var}').values.flatten(),
                      n_samples) 
                      for var in self._param_list
                     ]
@@ -111,7 +113,7 @@ class BaseModel(ABC, Generic[SELF]):
         else:
             return tuple(
                 [
-                    self.idata.posterior.get(f'{self.__class__.__name__}::{var}').mean().to_numpy()
+                    self._idata.posterior.get(f'{self.__class__.__name__}::{var}').mean().to_numpy()
                     for var in self._param_list
                     ]
                 )
@@ -145,6 +147,52 @@ class BaseModel(ABC, Generic[SELF]):
         
         return predictions
     
+    def save(self, filename: str) -> None:
+        """
+        Dump InferenceData from fitted model into a JSON or CSV file. Format is inferred from the filename.
+
+        Parameters
+        ----------
+        filename: str
+            Path and/or filename where model data will be saved.
+        """
+
+        if '.json' in filename:
+            self._idata.to_json(filename)
+        elif '.csv' in filename:
+            df = self._idata.to_dataframe()#include_index=False)
+            df.to_csv(filename)#,index=False)
+
+    def load(self, filename: str) -> SELF:
+        """
+        Load InferenceData from an existing JSON into an existing model.
+
+        Parameters
+        ----------
+        filename: str
+            Path and/or filename of InferenceData.
+
+        Returns
+        -------
+        self
+            with loaded ``_idata`` attribute for model evaluation and predictions.
+        """
+
+        if '.json' in filename:
+            self._idata = az.from_json(filename)
+        # TODO: CSV loadings currently encountering issues.
+        # elif '.csv' in filename:
+        #     df = pd.read_csv(filename).to_dict()
+        #     self._idata = az.from_dict(df)
+            # xdata = xr.Dataset.from_dataframe(df)
+            # self._idata = az.convert_to_inference_data(xdata)
+
+        # BETA TODO: Raise BTYDException.
+        # if dict(filter(lambda item: self.__class__.__name__ not in item[0], self._idata.posterior.get('data_vars').items()))
+            # raise BTYDException
+
+        return self
+        
     @staticmethod
     def _dataframe_parser(rfm_df: pd.DataFrame) -> Tuple[np.ndarray]:
         """ Parse input dataframe into separate RFM components. """
@@ -219,3 +267,11 @@ class PredictMixin(ABC, Generic[SELF]):
         posterior_draws: int = 100
         ) -> None:
         pass
+    
+    # BETA TODO: this attribute must be re-declared in model subclasses and is retained here for documentation purposes only.
+    _quantities_of_interest = {
+        'cond_prob_alive': _conditional_probability_alive,
+        'cond_n_prchs_to_time': _conditional_expected_number_of_purchases_up_to_time,
+        'n_prchs_to_time': _expected_number_of_purchases_up_to_time,
+        'prob_n_prchs_to_time': _probability_of_n_purchases_up_to_time,
+        }

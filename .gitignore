@@ -82,3 +82,5 @@ requirements.in
 # btyd Testing Artifacts
 betageo_fitter.pkl
 exploded.csv
+bgnbd.json
+bgnbd.csv
