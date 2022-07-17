@@ -1,6 +1,7 @@
 from __future__ import generator_stop
 from __future__ import annotations
 
+import os
 import inspect
 
 import pytest
@@ -117,11 +118,11 @@ class TestBetaGeoModel:
         THEN the new instantiated attributes should include an arviz InferenceData class and dict with required model parameters.
         """
 
-        assert isinstance(fitted_bgm.idata,az.InferenceData)
+        assert isinstance(fitted_bgm._idata,az.InferenceData)
 
         # Check if arviz methods are supported.
         summary = az.summary(
-            data=fitted_bgm.idata, 
+            data=fitted_bgm._idata, 
             var_names=['BetaGeoModel::a','BetaGeoModel::b','BetaGeoModel::alpha','BetaGeoModel::r']
             )
         assert isinstance(summary,pd.DataFrame)
@@ -288,4 +289,42 @@ class TestBetaGeoModel:
         expected_cols = ["frequency", "recency", "T", "lambda", "p", "alive"]
         actual_cols = list(synthetic_df.columns)
 
-        assert actual_cols == expected_cols    
+        assert actual_cols == expected_cols
+
+    @pytest.mark.parametrize("filename", ["./bgnbd.json", "./bgnbd.csv"])
+    def test_save(self, fitted_bgm, filename):
+        """
+        GIVEN a fitted BetaGeoModel object,
+        WHEN self.save_model() is called,
+        THEN the external JSON and CSV files should exist.
+        """
+
+        # Remove saved file if it already exists:
+        try:
+            os.remove(filename)
+        except FileNotFoundError:
+            pass
+        finally:
+            assert os.path.isfile(filename) == False
+
+            fitted_bgm.save(filename)
+            assert os.path.isfile(filename) == True
+
+    @pytest.mark.parametrize("filename", ["./bgnbd.json"])
+    def test_load(self, fitted_bgm, filename):
+        """
+        GIVEN fitted and unfitted BetaGeoModel objects,
+        WHEN parameters of the fitted model are loaded from an external JSON and CSV via self.load_model(),
+        THEN InferenceData unloaded parameters should match, raising exceptions otherwise and if predictions attempted without RFM data.
+        """
+
+        bgm_new = btyd.BetaGeoModel()
+        bgm_new.load(filename)
+        assert isinstance(bgm_new._idata,az.InferenceData)
+        #assert bgm_new._idata.posterior.keys() ==  'sample'
+        assert bgm_new._unload_params() == fitted_bgm._unload_params()
+
+        # assert param exception (need another saved model and additions to self.load_model())
+        # assert prediction exception
+
+        os.remove(filename)  
