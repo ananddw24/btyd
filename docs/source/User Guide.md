@@ -55,7 +55,7 @@ from btyd.plotting import plot_frequency_recency_matrix
 plot_frequency_recency_matrix(bgm)
 ```
 
-![rfm_matrix](https://raw.githubusercontent.com/ColtAllen/btyd/docs/update_read_the_docs/docs/source/_static/rfmatrix.png)
+![rfm_matrix](https://raw.githubusercontent.com/ColtAllen/btyd/main/docs/source/_static/rfmatrix.png)
 
 
 We can see that if a customer has bought 25 times from you, and their latest purchase was when they were 35 weeks old (given the individual is 35 weeks old), then they are your best customer (bottom-right). Your coldest customers are those that are in the top-right corner: they bought a lot quickly, and we haven't seen them in weeks.
@@ -70,7 +70,7 @@ from btyd.plotting import plot_probability_alive_matrix
 plot_probability_alive_matrix(bgm)
 ```
 
-![prob](https://raw.githubusercontent.com/ColtAllen/btyd/docs/update_read_the_docs/docs/source/_static/alivematrix.png)
+![prob](https://raw.githubusercontent.com/ColtAllen/btyd/main/docs/source/_static/alivematrix.png)
 
 ##### Ranking customers from best to worst
 
@@ -102,7 +102,7 @@ from btyd.plotting import plot_period_transactions
 plot_period_transactions(bgm)
 ```
 
-![model_fit_1](https://raw.githubusercontent.com/ColtAllen/btyd/docs/update_read_the_docs/docs/source/_static/plotperiodtrans.png)
+![model_fit_1](https://raw.githubusercontent.com/ColtAllen/btyd/main/docs/source/_static/plotperiodtrans.png)
 
 We can see that our actual data and our simulated data line up well.
 
@@ -174,7 +174,7 @@ bgm.fit(summary_cal_holdout)
 plot_calibration_purchases_vs_holdout_purchases(bgf, summary_cal_holdout)
 ```
 
-![holdout](https://raw.githubusercontent.com/ColtAllen/btyd/docs/update_read_the_docs/docs/source/_static/holdout_graph.png)
+![holdout](https://raw.githubusercontent.com/ColtAllen/btyd/main/docs/source/_static/holdout_graph.png)
 
 ##### Customer Predictions
 
@@ -202,7 +202,7 @@ sp_trans = transaction_data.loc[transaction_data['id'] == id]
 plot_history_alive(bgm, days_since_birth, sp_trans, 'date')
 ```
 
-![history](https://raw.githubusercontent.com/ColtAllen/btyd/docs/update_read_the_docs/docs/source/_static/palive_history.png)
+![history](https://raw.githubusercontent.com/ColtAllen/btyd/main/docs/source/_static/palive_history.png)
 
 ### Estimating Customer Lifetime Value using the Gamma-Gamma model
 

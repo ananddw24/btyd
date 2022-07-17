@@ -6,7 +6,7 @@ This is intended to be a high-level documentation of how the code is structured.
 
 The usual workflow of using the `btyd` library is exemplified in the [User Guide](User Guide.md) page. It can also be represented through the following fluxogram:
 
-![Basic Workflow](https://raw.githubusercontent.com/ColtAllen/btyd/docs/update_read_the_docs/docs/source/_static/btyd_workflow.png)
+![Basic Workflow](https://raw.githubusercontent.com/ColtAllen/btyd/main/docs/source/_static/btyd_workflow.png)
 
 Notice that the right-most branch of the fluxogram actually refers to *monetary value* modeling.
 
@@ -14,15 +14,15 @@ Notice that the right-most branch of the fluxogram actually refers to *monetary 
 
 The core model primitive is the `BaseModel` abstract class inside `__init__.py`, which serves as a *superclass* for all models in BTYD. So far, only the `BetaGeoModel` is set on a higher layer, inheriting from the `BaseModel` and `PredictMixin` abstract classes. `PredictMixin` enforces model prediction conventions for all models except `GammaGammaModel`. The following image shows the UML Class Diagram for all modeling objects:
 
-![models_uml](https://raw.githubusercontent.com/ColtAllen/btyd/docs/update_read_the_docs/docs/source/_static/models_uml.png)
-If the image is too small, you can go to the source [here](https://raw.githubusercontent.com/ColtAllen/btyd/docs/update_read_the_docs/docs/source/_static/models_uml.png).
+![models_uml](https://raw.githubusercontent.com/ColtAllen/btyd/main/docs/docs/source/_static/models_uml.png)
+If the image is too small, you can go to the source [here](https://raw.githubusercontent.com/ColtAllen/btyd/main/docs/source/_static/models_uml.png).
 
 ## Graphs
 
 Graphs are plotted with functions coming from the `plotting.py` file. The main functions are cited below, alongside a brief description of how they are created:
 
-![plotting.py functions](https://raw.githubusercontent.com/ColtAllen/btyd/docs/update_read_the_docs/docs/source/_static/btyd_plotting.png)
-If the image is too small, you can go to the source [here](https://raw.githubusercontent.com/ColtAllen/btyd/docs/update_read_the_docs/docs/source/_static/btyd_plotting.png).
+![plotting.py functions](https://raw.githubusercontent.com/ColtAllen/btyd/main/docs/source/_static/btyd_plotting.png)
+If the image is too small, you can go to the source [here](https://raw.githubusercontent.com/ColtAllen/btyd/main/docs/source/_static/btyd_plotting.png).
 
 - `plot_period_transactions` : aggregation on how many purchases each customer has made in the calibration period.
 - `plot_calibration_purchases_vs_holdout_purchases` : aggregation over the conditional expected number of purchases.
