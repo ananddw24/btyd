@@ -3,8 +3,6 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to btyd's documentation!
-================================
 
 .. include:: intro.rst
 
@@ -18,7 +16,6 @@ Welcome to btyd's documentation!
    Generate RFM Summaries From a SQL Store
    btyd
    Changelog
-
 
 
 Indices and tables
