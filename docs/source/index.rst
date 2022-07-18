@@ -10,7 +10,7 @@
    :maxdepth: 2
    :caption: Contents:
 
-   User_Guide
+   User Guide
    Saving and Loading Models
    Generate RFM Summaries From a SQL Store
    btyd
