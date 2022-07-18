@@ -12,7 +12,7 @@ Welcome to btyd's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   User Guide
+   User_Guide
    High Level Overview
    Saving and Loading Models
    Generate RFM Summaries From a SQL Store
