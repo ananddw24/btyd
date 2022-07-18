@@ -55,6 +55,27 @@ exclude_patterns = []
 #
 html_theme = "pydata_sphinx_theme"
 
+# Theme options are theme-specific and customize the look and feel of a theme
+# further.  For a list of options available for each theme, see the
+# documentation.
+
+# https://pydata-sphinx-theme.readthedocs.io/en/latest/user_guide/configuring.html
+
+html_theme_options = {
+    "icon_links": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/ColtAllen/btyd",
+            "icon": "fab fa-github-square",
+        },
+        {
+            "name": "PyPi",
+            "url": "https://pypi.org/project/btyd/",
+            "icon": "fas fa-box",
+        },
+    ],
+}
+
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
