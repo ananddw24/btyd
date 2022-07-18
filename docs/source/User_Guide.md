@@ -1,4 +1,4 @@
-# Quickstart
+# User Guide
 
 For the following examples, we'll use a dataset from an ecommerce provider to analyze their customers' repeat purchases. The examples below are using the `cdnow_customers.csv` located in the `datasets/` directory.
 
