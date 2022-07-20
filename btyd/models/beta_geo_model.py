@@ -23,13 +23,11 @@ from ..generate_data import beta_geometric_nbd_model
 class BetaGeoModel(PredictMixin['BetaGeoModel'], BaseModel['BetaGeoModel']):
     """
     Also known as the BG/NBD model.
-    Based on [2]_, this model has the following assumptions:
-    1) Each individual, i, has a hidden lambda_i and p_i parameter
-    2) These come from a population wide Gamma and a Beta distribution
-       respectively.
-    3) Individuals purchases follow a Poisson process with rate lambda_i*t .
-    4) After each purchase, an individual has a p_i probability of dieing
-       (never buying again).
+    Based on [1]_, this model has the following assumptions:
+    1) Each individual, ``i``, has a hidden ``lambda_i`` and ``p_i`` parameter
+    2) These come from a population wide Gamma and a Beta distribution respectively.
+    3) Individuals purchases follow a Poisson process with rate :math:`\lambda_i*t` .
+    4) After each purchase, an individual has a ``p_i`` probability of dieing (never buying again).
     
     Parameters
     ----------
@@ -38,16 +36,19 @@ class BetaGeoModel(PredictMixin['BetaGeoModel'], BaseModel['BetaGeoModel']):
 
     Attributes
     ----------
-    params_: :obj: Series
-        The fitted parameters of the model
+    _hyperparams : dict
+        Hyperparameters of prior parameter distributions for model fitting.
+    _param_list : list
+        List of estimated model parameters.
+    _model : pymc.Model
+        Hierarchical Bayesian model.
+
     data: :obj: DataFrame
         A DataFrame with the values given in the call to `fit`
-    attr_name : datatype
-        Add description here.
         
     References
     ----------
-    .. [2] Fader, Peter S., Bruce G.S. Hardie, and Ka Lok Lee (2005a),
+    .. [1] Fader, Peter S., Bruce G.S. Hardie, and Ka Lok Lee (2005a),
        "Counting Your Customers the Easy Way: An Alternative to the
        Pareto/NBD Model," Marketing Science, 24 (2), 275-84.
 
@@ -285,7 +286,7 @@ class BetaGeoModel(PredictMixin['BetaGeoModel'], BaseModel['BetaGeoModel']):
         Returns
         -------
         array
-            value representing a probability
+            Value representing probability customer is still alive.
         """
 
         # To get rid of these arguments and IF statements, the pertinent unit test must be refactored.
@@ -322,7 +323,7 @@ class BetaGeoModel(PredictMixin['BetaGeoModel'], BaseModel['BetaGeoModel']):
         Calculate repeat purchases for a randomly chosen individual from the
         population.
 
-        Equivalent to equation (9) of [2]_.
+        Equivalent to equation (9) of [1]_.
 
         Parameters
         ----------
@@ -335,9 +336,10 @@ class BetaGeoModel(PredictMixin['BetaGeoModel'], BaseModel['BetaGeoModel']):
 
         References
         ----------
-        .. [2] Fader, Peter S., Bruce G.S. Hardie, and Ka Lok Lee (2005a),
+        .. [1] Fader, Peter S., Bruce G.S. Hardie, and Ka Lok Lee (2005a),
         "Counting Your Customers the Easy Way: An Alternative to the
         Pareto/NBD Model," Marketing Science, 24 (2), 275-84.
+
         """
 
         self._alpha, self._r, self._a, self._b = self._unload_params(posterior,posterior_draws)
@@ -366,7 +368,7 @@ class BetaGeoModel(PredictMixin['BetaGeoModel'], BaseModel['BetaGeoModel']):
         where N(t) is the number of repeat purchases a customer makes in t
         units of time.
 
-        Comes from equation (8) of [2]_.
+        Comes from equation (8) of [1]_.
 
         Parameters
         ----------
@@ -382,7 +384,7 @@ class BetaGeoModel(PredictMixin['BetaGeoModel'], BaseModel['BetaGeoModel']):
 
         References
         ----------
-        .. [2] Fader, Peter S., Bruce G.S. Hardie, and Ka Lok Lee (2005a),
+        .. [1] Fader, Peter S., Bruce G.S. Hardie, and Ka Lok Lee (2005a),
         "Counting Your Customers the Easy Way: An Alternative to the
         Pareto/NBD Model," Marketing Science, 24 (2), 275-84.
         """

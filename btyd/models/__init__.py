@@ -73,7 +73,7 @@ class BaseModel(ABC, Generic[SELF]):
         Returns
         -------
         self
-            with ``_idata`` attribute for model evaluation and predictions.
+            Fitted model with ``_idata`` attribute for model evaluation and predictions.
         """
 
         self._frequency, self._recency, self._T, self._monetary_value, _ = self._dataframe_parser(rfm_df)
